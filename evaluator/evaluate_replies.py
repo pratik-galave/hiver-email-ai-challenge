@@ -3,6 +3,7 @@ import os
 
 from dotenv import load_dotenv
 from openai import OpenAI
+from common.utils import retry
 
 load_dotenv()
 
@@ -87,9 +88,9 @@ Generated Reply
 {reply}
 """
 
-    response = client.chat.completions.create(
-        model=MODEL_NAME,
-        temperature=0,
+    response = retry(
+    lambda: client.chat.completions.create(
+        model="llama-3.3-70b-versatile",
         messages=[
             {
                 "role": "system",
@@ -99,8 +100,10 @@ Generated Reply
                 "role": "user",
                 "content": user_prompt
             }
-        ]
+        ],
+        temperature=0.4
     )
+)
 
     result = response.choices[0].message.content.strip()
 

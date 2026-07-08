@@ -11,6 +11,12 @@ client = OpenAI(
     base_url="https://api.groq.com/openai/v1"
 )
 
+OUTPUT_FILE = "data/emails.json"
+
+if os.path.exists(OUTPUT_FILE):
+    print("emails.json already exists. Skipping generation.")
+    exit(0)
+
 PROMPT = """
 Generate exactly 15 realistic customer support emails for an e-commerce company.
 

@@ -1,0 +1,20 @@
+import time
+
+
+def retry(func, retries=3, delay=2):
+
+    for attempt in range(retries):
+
+        try:
+            return func()
+
+        except Exception as e:
+
+            print(
+                f"Attempt {attempt + 1} failed: {e}"
+            )
+
+            if attempt == retries - 1:
+                raise
+
+            time.sleep(delay)

@@ -3,6 +3,7 @@ import os
 
 from dotenv import load_dotenv
 from openai import OpenAI
+from common.utils import retry
 
 load_dotenv()
 
@@ -43,7 +44,8 @@ Email:
 {email['body']}
 """
 
-    response = client.chat.completions.create(
+    response = retry(
+    lambda: client.chat.completions.create(
         model="llama-3.3-70b-versatile",
         messages=[
             {
@@ -55,8 +57,9 @@ Email:
                 "content": user_prompt
             }
         ],
-        temperature=0.4,
+        temperature=0.4
     )
+)
 
     reply = response.choices[0].message.content.strip()
 
