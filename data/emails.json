@@ -1,0 +1,92 @@
+[
+    {
+        "id": 1,
+        "category": "refund request",
+        "subject": "Refund for Defective Product",
+        "body": "Dear Support, I am writing to request a refund for my defective iPhone case. The item was delivered on 02/10/2023, but it does not fit my phone. My order number is #1234. Please assist me with the refund process. Thank you, Emily Wilson."
+    },
+    {
+        "id": 2,
+        "category": "shipping delay",
+        "subject": "Where is My Package?",
+        "body": "Hi, I ordered the Nike Air Max shoes on 01/20/2023, but I still haven't received them. The tracking information says it's still in transit. Can you please look into this and provide an update on the status of my package? - David Lee"
+    },
+    {
+        "id": 3,
+        "category": "product defect",
+        "subject": "Defective Product: KitchenAid Mixer",
+        "body": "Dear Customer Support, I received my KitchenAid mixer on 02/05/2023, but it's not working properly. The device is making a loud noise and not mixing well. I would appreciate it if you could replace it with a new one or provide a refund. Order #5678. Sincerely, Rachel Brown."
+    },
+    {
+        "id": 4,
+        "category": "cancellation",
+        "subject": "Cancel My Order",
+        "body": "Hi Support, I need to cancel my order #9012 for the Sony TV. I placed the order on 02/15/2023, but I realized I can get a better deal elsewhere. Please cancel the order and refund my money as soon as possible. Thanks, James Davis."
+    },
+    {
+        "id": 5,
+        "category": "billing issue",
+        "subject": "Incorrect Charge on My Card",
+        "body": "Dear Support Team, I was charged $150 for my Samsung phone case, but the price on the website was $120. I would like you to investigate this matter and correct the charge. My order number is #1111. Thank you, Kevin White."
+    },
+    {
+        "id": 6,
+        "category": "angry complaint",
+        "subject": "Unacceptable Customer Service",
+        "body": "I am extremely disappointed with the service I received from your company. I ordered the Apple Watch on 01/25/2023, but it was delivered with a scratch on the screen. When I called customer support, the representative was rude and unhelpful. I demand a replacement and a refund for the shipping cost. - Mark Taylor"
+    },
+    {
+        "id": 7,
+        "category": "simple question",
+        "subject": "Product Inquiry",
+        "body": "Hi, I am interested in purchasing the Canon camera. Can you please tell me if it comes with a warranty and what is the return policy? Thanks, Sarah Taylor."
+    },
+    {
+        "id": 8,
+        "category": "refund request",
+        "subject": "Refund for Unused Product",
+        "body": "Dear Support, I would like to request a refund for my unused HP printer. I ordered it on 02/01/2023, but I realized I don't need it anymore. The item is still in its original packaging and has not been used. Please assist me with the refund process. Order #2222. Thank you, Michael Kim."
+    },
+    {
+        "id": 9,
+        "category": "shipping delay",
+        "subject": "Urgent: Where is My Package?",
+        "body": "Hi Support, I ordered the Lenovo laptop on 02/10/2023, and it was supposed to be delivered on 02/15/2023. However, it's now 02/20/2023, and I still haven't received it. Can you please look into this and provide an update on the status of my package? This is urgent as I need the laptop for work. - Daniel Lee"
+    },
+    {
+        "id": 10,
+        "category": "product defect",
+        "subject": "Defective Product: Bose Headphones",
+        "body": "Dear Customer Support, I received my Bose headphones on 01/28/2023, but they are not working properly. The sound is distorted, and the device is not connecting to my phone. I would appreciate it if you could replace it with a new one or provide a refund. Order #3333. Sincerely, Olivia Martin."
+    },
+    {
+        "id": 11,
+        "category": "cancellation",
+        "subject": "Cancel My Order Please",
+        "body": "Hi Support, I need to cancel my order #4444 for the Xbox console. I placed the order on 02/12/2023, but I realized I can get a better deal elsewhere. Please cancel the order and refund my money as soon as possible. Thanks, William Brown."
+    },
+    {
+        "id": 12,
+        "category": "billing issue",
+        "subject": "Multiple Charges on My Card",
+        "body": "Dear Support Team, I was charged twice for my LG TV. The order number is #5555, and the amount is $800. I would like you to investigate this matter and correct the charge. Please refund the extra amount to my card. Thank you, Amanda Davis."
+    },
+    {
+        "id": 13,
+        "category": "angry complaint",
+        "subject": "Unacceptable Product Quality",
+        "body": "I am extremely disappointed with the quality of the product I received. I ordered the Dell laptop on 01/30/2023, but it's not working properly. The keyboard is not functioning, and the screen is blurry. I demand a replacement and a refund for the shipping cost. This is unacceptable, and I will never shop from your website again. - Christopher White"
+    },
+    {
+        "id": 14,
+        "category": "simple question",
+        "body": "Hi, what is the return policy for the MacBook Air?",
+        "subject": "Return Policy Inquiry"
+    },
+    {
+        "id": 15,
+        "category": "refund request",
+        "subject": "Refund Request for Damaged Product",
+        "body": "Dear Support, I received my Samsung tablet on 02/05/2023, but it was damaged during shipping. The screen is cracked, and the device is not working. I would like to request a refund for the damaged product. My order number is #6666. Please assist me with the refund process. Thank you, Jessica Hall."
+    }
+]
