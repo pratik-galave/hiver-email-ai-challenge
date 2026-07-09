@@ -1,0 +1,148 @@
+import base64
+import os
+import pickle
+
+from email.mime.text import MIMEText
+from email.utils import parseaddr
+from google.auth.transport.requests import Request
+from google_auth_oauthlib.flow import InstalledAppFlow
+from googleapiclient.discovery import build
+
+SCOPES = ["https://www.googleapis.com/auth/gmail.modify"]
+
+
+def get_service():
+    creds = None
+
+    if os.path.exists("token.pickle"):
+        with open("token.pickle", "rb") as f:
+            creds = pickle.load(f)
+
+    if creds and creds.expired and creds.refresh_token:
+        creds.refresh(Request())
+
+    elif not creds or not creds.valid:
+        flow = InstalledAppFlow.from_client_secrets_file(
+            "credentials.json",
+            SCOPES
+        )
+
+        creds = flow.run_local_server(port=0)
+
+        with open("token.pickle", "wb") as f:
+            pickle.dump(creds, f)
+
+    return build("gmail", "v1", credentials=creds)
+
+
+def extract_body(payload):
+    """
+    Recursively extracts the plain text body.
+    """
+
+    if payload.get("mimeType") == "text/plain":
+        data = payload.get("body", {}).get("data")
+
+        if data:
+            return base64.urlsafe_b64decode(data).decode(
+                "utf-8",
+                errors="ignore"
+            )
+
+    for part in payload.get("parts", []):
+        text = extract_body(part)
+        if text:
+            return text
+
+    return ""
+
+
+def fetch_unread_emails(service, max_results=5):
+
+    response = (
+        service.users()
+        .messages()
+        .list(
+            userId="me",
+            labelIds=["INBOX", "UNREAD"],
+            maxResults=max_results,
+        )
+        .execute()
+    )
+
+    messages = response.get("messages", [])
+
+    emails = []
+
+    for message in messages:
+
+        full = (
+            service.users()
+            .messages()
+            .get(
+                userId="me",
+                id=message["id"],
+                format="full"
+            )
+            .execute()
+        )
+
+        headers = full["payload"]["headers"]
+
+        subject = ""
+
+        sender = ""
+
+        for h in headers:
+
+            if h["name"] == "Subject":
+                subject = h["value"]
+
+            elif h["name"] == "From":
+                sender = h["value"]
+
+        emails.append(
+            {
+                "id": message["id"],
+                "threadId": full["threadId"],
+                "subject": subject,
+                "from": sender,
+                "body": extract_body(full["payload"]),
+            }
+        )
+
+    return emails
+
+def create_draft_reply(service, to_email, subject, reply_body, thread_id):
+    """
+    Creates a Gmail draft reply in the same conversation thread.
+    """
+
+    # Extract just the email address if "Name <email@example.com>" is provided
+    _, email_address = parseaddr(to_email)
+
+    message = MIMEText(reply_body)
+
+    message["to"] = email_address
+    message["subject"] = f"Re: {subject}"
+
+    raw = base64.urlsafe_b64encode(
+        message.as_bytes()
+    ).decode()
+
+    draft = (
+        service.users()
+        .drafts()
+        .create(
+            userId="me",
+            body={
+                "message": {
+                    "raw": raw,
+                    "threadId": thread_id
+                }
+            }
+        )
+        .execute()
+    )
+
+    return draft

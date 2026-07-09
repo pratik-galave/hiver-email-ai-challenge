@@ -19,7 +19,7 @@ def run_step(title, command):
         )
 
     except subprocess.CalledProcessError as e:
-        print(f"\n❌ Failed during: {title}")
+        print(f"\n[FAIL] Failed during: {title}")
         sys.exit(e.returncode)
 
 
@@ -28,7 +28,7 @@ def main():
     env_file = os.path.join(PROJECT_ROOT, ".env")
 
     if not os.path.exists(env_file):
-        print("❌ .env file not found.")
+        print("[ERROR] .env file not found.")
         sys.exit(1)
 
     run_step(
@@ -47,13 +47,13 @@ def main():
     )
 
     print("\n" + "=" * 60)
-    print("🎉 Pipeline completed successfully!")
+    print("SUCCESS: Pipeline completed successfully!")
     print("=" * 60)
 
     print("\nGenerated files:")
-    print("✓ data/emails.json")
-    print("✓ data/replies.json")
-    print("✓ data/scores.json")
+    print("  - data/emails.json")
+    print("  - data/replies.json")
+    print("  - data/scores.json")
 
 
 if __name__ == "__main__":

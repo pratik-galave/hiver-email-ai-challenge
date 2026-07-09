@@ -1,42 +1,42 @@
 [
     {
-        "id": 1,
-        "overall": 4.8,
+        "id": "19f476ef014b1bd9",
+        "overall": 4.6,
         "scores": {
             "relevance": 5,
             "tone": 5,
-            "completeness": 5,
+            "completeness": 4,
             "accuracy": 5,
             "conciseness": 4,
-            "justification": "The reply directly addresses the customer's issue, is polite and empathetic, provides a clear resolution and next step, avoids inventing policies, but is a bit lengthy."
+            "justification": "The reply directly addresses the customer's newsletter, is polite and professional, and provides a clear offer of assistance."
         }
     },
     {
-        "id": 2,
-        "overall": 4.8,
+        "id": "19f46f42ae0a0f17",
+        "overall": 4.6,
         "scores": {
             "relevance": 5,
             "tone": 5,
-            "completeness": 5,
+            "completeness": 4,
             "accuracy": 5,
             "conciseness": 4,
-            "justification": "The reply directly addresses the customer's issue, is polite and empathetic, provides a clear resolution, avoids inventing policies, and is mostly concise."
+            "justification": "The response directly addresses the customer's email, is polite and professional, and requests more information to provide a resolution."
         }
     },
     {
-        "id": 3,
-        "overall": 4.8,
+        "id": "19f4607571c4e156",
+        "overall": 4.4,
         "scores": {
             "relevance": 5,
             "tone": 5,
-            "completeness": 5,
+            "completeness": 4,
             "accuracy": 5,
-            "conciseness": 4,
-            "justification": "The reply directly addresses the customer's issue, is polite and professional, provides a clear resolution, and avoids making unsupported promises."
+            "conciseness": 3,
+            "justification": "The reply directly addresses the customer's issue, is polite and professional, and provides a clear next step, but is a bit lengthy."
         }
     },
     {
-        "id": 4,
+        "id": "19f454b16f23575f",
         "overall": 4.8,
         "scores": {
             "relevance": 5,
@@ -44,139 +44,19 @@
             "completeness": 5,
             "accuracy": 5,
             "conciseness": 4,
-            "justification": "The reply directly addresses the customer's issue, is polite and empathetic, provides a clear resolution, avoids inventing policies, and is mostly brief."
+            "justification": "The reply directly addresses the customer's issue, is polite and professional, provides a clear resolution, avoids inventing company policies, but is a bit lengthy."
         }
     },
     {
-        "id": 5,
-        "overall": 4.8,
+        "id": "19f42294cb640063",
+        "overall": 4.6,
         "scores": {
             "relevance": 5,
             "tone": 5,
-            "completeness": 5,
+            "completeness": 4,
             "accuracy": 5,
             "conciseness": 4,
-            "justification": "The reply directly addresses the customer's issue, is polite and empathetic, provides a clear resolution and next step, avoids inventing policies, but is a bit lengthy."
-        }
-    },
-    {
-        "id": 6,
-        "overall": 4.8,
-        "scores": {
-            "relevance": 5,
-            "tone": 5,
-            "completeness": 5,
-            "accuracy": 5,
-            "conciseness": 4,
-            "justification": "The reply directly addresses the customer's issue, is polite and empathetic, provides a clear resolution, and avoids making unsupported promises."
-        }
-    },
-    {
-        "id": 7,
-        "overall": 4.8,
-        "scores": {
-            "relevance": 5,
-            "tone": 5,
-            "completeness": 5,
-            "accuracy": 5,
-            "conciseness": 4,
-            "justification": "The reply directly addresses the customer's questions, is polite and professional, provides a clear resolution, avoids inventing policies, but is a bit lengthy."
-        }
-    },
-    {
-        "id": 8,
-        "overall": 4.8,
-        "scores": {
-            "relevance": 5,
-            "tone": 5,
-            "completeness": 5,
-            "accuracy": 5,
-            "conciseness": 4,
-            "justification": "The reply directly addresses the customer's issue, is polite and empathetic, provides a clear resolution, avoids inventing policies, and is mostly concise."
-        }
-    },
-    {
-        "id": 9,
-        "overall": 4.8,
-        "scores": {
-            "relevance": 5,
-            "tone": 5,
-            "completeness": 5,
-            "accuracy": 5,
-            "conciseness": 4,
-            "justification": "The reply directly addresses the customer's issue, is polite and empathetic, provides a clear resolution and next step, and avoids making unsupported promises."
-        }
-    },
-    {
-        "id": 10,
-        "overall": 4.8,
-        "scores": {
-            "relevance": 5,
-            "tone": 5,
-            "completeness": 5,
-            "accuracy": 5,
-            "conciseness": 4,
-            "justification": "The reply directly addresses the customer's issue, is polite and empathetic, provides a clear next step, and does not invent company policies."
-        }
-    },
-    {
-        "id": 11,
-        "overall": 4.8,
-        "scores": {
-            "relevance": 5,
-            "tone": 5,
-            "completeness": 5,
-            "accuracy": 5,
-            "conciseness": 4,
-            "justification": "The reply directly addresses the customer's issue, is polite and empathetic, provides a clear resolution and next step, avoids inventing policies, and is mostly brief."
-        }
-    },
-    {
-        "id": 12,
-        "overall": 4.8,
-        "scores": {
-            "relevance": 5,
-            "tone": 5,
-            "completeness": 5,
-            "accuracy": 5,
-            "conciseness": 4,
-            "justification": "The reply directly addresses the customer's issue, is polite and empathetic, provides a clear resolution and next steps, avoids inventing policies, and is mostly brief."
-        }
-    },
-    {
-        "id": 13,
-        "overall": 4.8,
-        "scores": {
-            "relevance": 5,
-            "tone": 5,
-            "completeness": 5,
-            "accuracy": 5,
-            "conciseness": 4,
-            "justification": "The reply directly addresses the customer's issue, is polite and empathetic, provides a clear resolution and next steps, avoids inventing policies, but is a bit lengthy."
-        }
-    },
-    {
-        "id": 14,
-        "overall": 4.8,
-        "scores": {
-            "relevance": 5,
-            "tone": 5,
-            "completeness": 5,
-            "accuracy": 5,
-            "conciseness": 4,
-            "justification": "The reply directly addresses the customer's inquiry, is polite and professional, provides a clear return policy and next steps, and avoids making unsupported promises."
-        }
-    },
-    {
-        "id": 15,
-        "overall": 4.8,
-        "scores": {
-            "relevance": 5,
-            "tone": 5,
-            "completeness": 5,
-            "accuracy": 5,
-            "conciseness": 4,
-            "justification": "The reply directly addresses the customer's issue, is polite and empathetic, provides a clear resolution, and avoids inventing company policies."
+            "justification": "The reply directly addresses the customer's email and offers assistance."
         }
     }
 ]
