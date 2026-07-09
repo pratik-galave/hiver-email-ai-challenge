@@ -1,86 +1,167 @@
-# Hiver Open Challenge — AI Email Reply Generator
+# Hiver Open Challenge — AI Email Reply Assistant
 
 ## Overview
 
-This project implements an AI-powered customer support email assistant that automatically generates professional draft replies to customer emails and evaluates the quality of those replies using an LLM-as-a-Judge framework.
+This project is an AI-powered email assistant that connects directly with Gmail, intelligently identifies emails that actually require a response, drafts personalized replies using a Large Language Model (LLM), and evaluates the quality of generated responses using an LLM-as-a-Judge framework.
 
-The project is divided into three stages:
+Unlike traditional email automation, the assistant first determines whether an email genuinely deserves a reply. Marketing emails, newsletters, receipts, shipping notifications, and other automated messages are skipped, while conversational emails receive context-aware draft responses.
 
-1. **Dataset Generation** – Generate a realistic dataset of customer support emails using an LLM.
-2. **Reply Generation** – Generate empathetic and professional replies for each customer email.
-3. **Evaluation** – Evaluate every generated reply using a rubric-based LLM judge and produce quantitative scores.
+For safety, replies are **saved as Gmail drafts instead of being sent automatically**, allowing the user to review them before sending.
 
-The entire pipeline can be executed with a single command.
+---
+
+# Features
+
+- 📥 Connects to Gmail using OAuth 2.0
+- 📧 Fetches unread emails directly from the inbox
+- 🧠 Classifies whether an email actually needs a reply
+- ✍️ Generates personalized AI replies
+- 📝 Creates Gmail drafts (never auto-sends emails)
+- 📊 Evaluates generated replies using an LLM-as-a-Judge framework
+- 📁 Supports both Gmail mode and static dataset mode for reproducible evaluation
 
 ---
 
 # Approach
 
-## Dataset Generation
+The project consists of four major stages.
 
-A dataset of **15 realistic customer support emails** was generated using the Groq API with the Llama 3.3 70B Versatile model.
+## 1. Dataset Generation
 
-The emails cover multiple customer support scenarios including:
+A synthetic dataset of realistic customer support emails is generated using the Groq API and stored locally in:
+
+```
+data/emails.json
+```
+
+The dataset contains multiple categories including:
 
 - Refund requests
 - Shipping delays
-- Product defects
 - Billing issues
+- Product defects
 - Order cancellations
-- Angry complaints
+- Customer complaints
 - General questions
 
-The generated dataset is stored in `data/emails.json`.
-
-To ensure reproducibility, the dataset is generated **only once** and reused in subsequent runs instead of regenerating every execution.
+The dataset is generated only once to ensure reproducible evaluation.
 
 ---
 
-## Reply Generation
+## 2. Gmail Integration
 
-Each email is processed independently.
+The project authenticates using the Gmail API through OAuth 2.0.
 
-A system prompt instructs the language model to behave as an experienced customer support representative and generate replies that are:
+Once authenticated, it:
 
-- Professional
-- Empathetic
-- Helpful
-- Concise
-- Action-oriented
+- Fetches unread emails
+- Extracts sender, subject and body
+- Preserves Gmail thread IDs
+- Works directly on a user's inbox
 
-The original email's subject and body are provided as the user prompt.
-
-Generated replies are stored in:
-
-```
-data/replies.json
-```
+Authentication tokens are stored locally and reused for future sessions.
 
 ---
 
-## Evaluation
+## 3. Intelligent Reply Generation
 
-Instead of manually reviewing responses or relying on keyword matching, this project uses an **LLM-as-a-Judge** approach.
+Instead of behaving like a customer support representative, the model acts as a **personal email assistant**.
 
-Each generated reply is evaluated against the original customer email using a structured rubric.
+Before generating a response, the assistant first determines whether an email deserves a reply.
 
-The evaluator produces both:
+Emails such as:
 
-- Individual criterion scores
-- Overall response score
+- newsletters
+- advertisements
+- promotions
+- receipts
+- shipping notifications
+- OTP emails
 
-Results are saved in:
+are automatically skipped.
+
+Only conversational emails proceed to the reply generation stage.
+
+The reply is generated using the Groq Llama 3.3 70B Versatile model with a prompt that writes naturally in the user's voice rather than using corporate support language.
+
+Generated replies are:
+
+- concise
+- natural
+- conversational
+- context-aware
+- written in first person
+
+---
+
+## 4. Gmail Draft Creation
+
+Instead of sending emails automatically, every generated response is saved as a Gmail Draft.
+
+This allows human review before sending and avoids accidental responses.
+
+Drafts are created within the original email thread, preserving Gmail conversations.
+
+---
+
+## 5. Evaluation
+
+When running in dataset mode, every generated reply is evaluated using an LLM-as-a-Judge.
+
+Each reply is scored on five dimensions:
+
+- Relevance
+- Tone
+- Completeness
+- Accuracy
+- Conciseness
+
+The evaluator produces:
+
+- Per-response scores
+- Criterion averages
+- Overall quality score
+- Lowest scoring response with justification
+
+Results are stored in:
 
 ```
 data/scores.json
 ```
 
-At the end of execution, the evaluation script prints:
+---
 
-- Overall average score
-- Average score for each criterion
-- Lowest scoring response
-- Justification for the lowest score
+# Why LLM-as-a-Judge?
+
+Evaluating email quality is inherently subjective.
+
+Simple rule-based methods struggle to assess qualities like empathy, conversational tone, or whether a reply genuinely resolves the sender's concern.
+
+Instead, this project uses another LLM as an evaluator with a structured rubric.
+
+This approach captures nuanced qualities while still producing structured, machine-readable scores.
+
+To improve consistency:
+
+- Temperature is fixed at 0
+- A strict JSON schema is enforced
+- Every reply is evaluated using the same rubric
+
+---
+
+# Evaluation Rubric
+
+Each generated reply is scored from **1–5** on:
+
+| Criterion | Description |
+|------------|-------------|
+| **Relevance** | Does the reply address the original email? |
+| **Tone** | Is the response polite, natural and appropriate? |
+| **Completeness** | Does it answer the email and provide a next step? |
+| **Accuracy** | Does it avoid making unsupported claims? |
+| **Conciseness** | Is the response brief while remaining useful? |
+
+The overall score is the average across all criteria and all evaluated replies.
 
 ---
 
@@ -89,100 +170,50 @@ At the end of execution, the evaluation script prints:
 - Python 3.11+
 - Groq API
 - Llama 3.3 70B Versatile
+- Gmail API
+- Google OAuth 2.0
+- OpenAI Python SDK (Groq-compatible)
 - python-dotenv
-- OpenAI Python SDK (Groq-compatible API)
 
 ---
 
 # Key Design Decisions
 
-### 1. Static Dataset
+### Gmail Drafts Instead of Auto-Send
 
-The dataset is generated once and saved locally.
+Emails are saved as drafts rather than being sent automatically.
 
-This ensures that evaluations are reproducible and comparable across multiple runs.
-
----
-
-### 2. LLM-generated Replies
-
-Instead of template-based responses, replies are generated dynamically by the language model.
-
-This allows responses to adapt naturally to different customer situations and writing styles.
+This keeps the user in control and avoids unintended responses.
 
 ---
 
-### 3. LLM-as-a-Judge
+### Reply Classification Before Generation
 
-Email quality is subjective.
+Many inbox messages (newsletters, receipts, promotions) do not require replies.
 
-A rule-based evaluator would struggle to assess qualities like empathy, professionalism, or completeness.
-
-Using an LLM with a fixed evaluation rubric provides more nuanced assessments while remaining structured and reproducible.
+An LLM classifier filters these emails before generation, reducing unnecessary API calls and preventing nonsensical draft responses.
 
 ---
 
-### 4. Structured JSON Output
+### Personal Assistant Persona
 
-Every LLM response requested by the evaluation pipeline returns strict JSON.
+Instead of responding like a customer support chatbot, replies are written as if the user is personally replying to their own inbox.
 
-This makes parsing reliable and allows easy aggregation of evaluation metrics.
-
----
-
-# Why This Evaluation Metric?
-
-Each generated reply is evaluated using five criteria:
-
-| Criterion | Description |
-|------------|-------------|
-| **Relevance** | Does the reply directly address the customer's issue? |
-| **Tone & Empathy** | Is the response professional, polite, and empathetic? |
-| **Completeness** | Does the reply provide a useful resolution or next step? |
-| **Accuracy** | Does it avoid unsupported promises or incorrect information? |
-| **Conciseness** | Is the reply brief while remaining informative? |
-
-Each criterion is scored from **1–5**.
-
-The final overall score is calculated by averaging all criteria across every generated response.
-
-### Why LLM-as-a-Judge?
-
-Compared to rule-based scoring, an LLM can better evaluate:
-
-- empathy
-- conversational quality
-- contextual relevance
-- helpfulness
-
-while still producing structured outputs.
-
-### Limitations
-
-LLM-based evaluation is not perfect.
-
-Possible limitations include:
-
-- Slight scoring inconsistency across runs
-- Potential evaluator bias
-- Dependence on prompt quality
-
-These are partially mitigated by:
-
-- Fixed evaluation rubric
-- Temperature set to 0 during evaluation
-- Strict JSON output format
+This produces much more natural emails.
 
 ---
 
-# Known Limitations
+### LLM-as-a-Judge
 
-- Small dataset (15 emails)
-- Single-turn conversations only
-- No retrieval of company policies or knowledge base
-- Replies are generated without customer history
-- No human evaluation for comparison
-- Evaluation depends on the judge model
+A rubric-based LLM evaluator provides richer feedback than keyword matching while remaining structured enough for quantitative evaluation.
+
+---
+
+### Static Dataset for Evaluation
+
+Synthetic emails are stored locally and reused across runs.
+
+This ensures reproducible benchmarking.
 
 ---
 
@@ -194,6 +225,10 @@ hiver-email-ai-challenge/
 ├── common/
 │   ├── __init__.py
 │   └── utils.py
+│
+├── gmail/
+│   ├── __init__.py
+│   └── gmail_client.py
 │
 ├── data/
 │   ├── generate_dataset.py
@@ -210,6 +245,8 @@ hiver-email-ai-challenge/
 │   ├── evaluate_replies.py
 │   └── __init__.py
 │
+├── credentials.json      # ignored by Git
+├── token.pickle          # ignored by Git
 ├── run.py
 ├── requirements.txt
 ├── .env.example
@@ -219,9 +256,9 @@ hiver-email-ai-challenge/
 
 ---
 
-# How to Run
+# Installation
 
-## 1. Clone the repository
+## Clone the repository
 
 ```bash
 git clone <repository-url>
@@ -230,13 +267,11 @@ cd hiver-email-ai-challenge
 
 ---
 
-## 2. Create a virtual environment
+## Create a virtual environment
 
 ```bash
 python -m venv .venv
 ```
-
-Activate it:
 
 Windows
 
@@ -252,7 +287,7 @@ source .venv/bin/activate
 
 ---
 
-## 3. Install dependencies
+## Install dependencies
 
 ```bash
 pip install -r requirements.txt
@@ -260,28 +295,54 @@ pip install -r requirements.txt
 
 ---
 
-## 4. Configure API key
+## Configure Environment Variables
 
-Create a `.env` file from `.env.example`
+Create a `.env` file:
 
-```
-GROQ_API_KEY=your_api_key_here
+```env
+GROQ_API_KEY=your_groq_api_key
+YOUR_NAME=Pratik
 ```
 
 ---
 
-## 5. Run the complete pipeline
+## Gmail API Setup
+
+1. Create a Google Cloud project.
+2. Enable the Gmail API.
+3. Configure the OAuth Consent Screen.
+4. Create Desktop OAuth Credentials.
+5. Download `credentials.json`.
+6. Place `credentials.json` in the project root.
+
+The first run will open a browser for Gmail authentication.
+
+---
+
+# Running the Project
+
+Run the complete pipeline:
 
 ```bash
 python run.py
 ```
 
-The pipeline will automatically:
+Depending on the selected mode:
 
-1. Generate the email dataset (if not already present)
-2. Generate AI replies
-3. Evaluate every reply
-4. Produce summary statistics
+### Gmail Mode
+
+- Authenticate with Gmail
+- Fetch unread emails
+- Skip newsletters/promotions
+- Generate AI replies
+- Save replies as Gmail drafts
+
+### Dataset Mode
+
+- Load synthetic dataset
+- Generate replies
+- Evaluate replies
+- Produce evaluation metrics
 
 ---
 
@@ -291,28 +352,48 @@ The pipeline will automatically:
 data/emails.json
 ```
 
-Generated customer support dataset.
+Synthetic evaluation dataset.
 
 ```
 data/replies.json
 ```
 
-AI-generated customer support replies.
+Generated AI replies.
 
 ```
 data/scores.json
 ```
 
-Evaluation scores and justifications for every reply.
+Evaluation scores generated by the LLM judge.
+
+---
+
+# Known Limitations
+
+- Single-turn email conversations only
+- No long-term conversation memory
+- No Retrieval-Augmented Generation (RAG)
+- Gmail integration currently supports draft creation only
+- Evaluation depends on the judge model
+- Small synthetic evaluation dataset
 
 ---
 
 # Future Improvements
 
-- Larger evaluation dataset
-- Human evaluation alongside LLM evaluation
-- Retrieval-Augmented Generation (RAG) using company policies
-- Multi-turn conversation support
-- Automatic prompt optimization
-- Multiple judge models for more robust evaluation
-- Confidence estimation for generated replies
+- Multi-turn email conversations
+- Retrieval-Augmented Generation using previous emails
+- Calendar-aware scheduling assistance
+- Automatic attachment summarization
+- Multi-model evaluation
+- Confidence scoring
+- Human-in-the-loop feedback for continual improvement
+- Web interface for reviewing generated drafts
+
+---
+
+# Author
+
+**Pratik Galave**
+
+Built to demonstrate practical LLM integration, prompt engineering, Gmail API automation, and rubric-based AI evaluation.
