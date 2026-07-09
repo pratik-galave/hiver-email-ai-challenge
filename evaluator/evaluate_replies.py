@@ -3,36 +3,37 @@ import os
 
 from dotenv import load_dotenv
 from openai import OpenAI
+
 from common.utils import retry
 
 load_dotenv()
 
 client = OpenAI(
-    api_key=os.getenv("API_KEY"),
-    base_url="https://api.groq.com/openai/v1"
+    api_key=os.getenv("GROQ_API_KEY") or os.getenv("API_KEY"),
+    base_url="https://api.groq.com/openai/v1",
 )
 
 MODEL_NAME = "llama-3.3-70b-versatile"
 
 SYSTEM_PROMPT = """
-You are an expert evaluator of customer support responses.
+You are an expert evaluator of AI-generated email replies.
 
 Evaluate the reply using ONLY these criteria.
 
 1. relevance
-Does the reply directly address the customer's issue?
+Does the reply directly address the email?
 
 2. tone
-Is the reply polite, empathetic and professional?
+Is the reply polite, natural and appropriate?
 
 3. completeness
-Does it provide a useful resolution or clear next step?
+Does it answer the email and provide an appropriate next step?
 
 4. accuracy
-Does it avoid inventing company policies or making unsupported promises?
+Does it avoid inventing facts or making unsupported claims?
 
 5. conciseness
-Is it brief without omitting important information?
+Is it concise while remaining useful?
 
 Each score must be an integer from 1 to 5.
 
@@ -47,12 +48,16 @@ Return ONLY valid JSON in exactly this format:
     "justification": "Short explanation."
 }
 
+Return JSON only.
 Do not use markdown.
-Do not add explanations outside the JSON.
 """
 
 INPUT_FILE = "data/replies.json"
 OUTPUT_FILE = "data/scores.json"
+
+# ----------------------------------------------------
+# Load replies
+# ----------------------------------------------------
 
 with open(INPUT_FILE, "r", encoding="utf-8") as f:
     replies = json.load(f)
@@ -64,24 +69,40 @@ totals = {
     "tone": 0,
     "completeness": 0,
     "accuracy": 0,
-    "conciseness": 0
+    "conciseness": 0,
 }
+
+# ----------------------------------------------------
+# Evaluate
+# ----------------------------------------------------
 
 for item in replies:
 
+    # Skip emails that intentionally received no reply
+    if item.get("status") == "SKIPPED":
+        print(f"Skipping evaluation: {item.get('subject', item['id'])}")
+        continue
+
+    if "original_email" not in item:
+        print(f"Skipping malformed entry: {item.get('id')}")
+        continue
+
     email = item["original_email"]
     reply = item["generated_reply"]
+
+    if not reply:
+        continue
 
     user_prompt = f"""
 Original Email
 
 Subject:
-{email["subject"]}
+{email['subject']}
 
 Body:
-{email["body"]}
+{email['body']}
 
--------------------------
+----------------------------------------
 
 Generated Reply
 
@@ -89,32 +110,36 @@ Generated Reply
 """
 
     response = retry(
-    lambda: client.chat.completions.create(
-        model="llama-3.3-70b-versatile",
-        messages=[
-            {
-                "role": "system",
-                "content": SYSTEM_PROMPT
-            },
-            {
-                "role": "user",
-                "content": user_prompt
-            }
-        ],
-        temperature=0.4
+        lambda: client.chat.completions.create(
+            model=MODEL_NAME,
+            temperature=0,
+            messages=[
+                {
+                    "role": "system",
+                    "content": SYSTEM_PROMPT,
+                },
+                {
+                    "role": "user",
+                    "content": user_prompt,
+                },
+            ],
+        )
     )
-)
 
     result = response.choices[0].message.content.strip()
 
     if result.startswith("```"):
         result = (
             result.replace("```json", "")
-                  .replace("```", "")
-                  .strip()
+            .replace("```", "")
+            .strip()
         )
 
-    evaluation = json.loads(result)
+    try:
+        evaluation = json.loads(result)
+    except json.JSONDecodeError:
+        print(f"Failed to parse evaluation for {item['id']}")
+        continue
 
     overall = (
         evaluation["relevance"]
@@ -124,17 +149,45 @@ Generated Reply
         + evaluation["conciseness"]
     ) / 5
 
-    scores.append({
-        "id": item["id"],
-        "overall": round(overall, 2),
-        "scores": evaluation
-    })
+    scores.append(
+        {
+            "id": item["id"],
+            "overall": round(overall, 2),
+            "scores": evaluation,
+        }
+    )
 
     for key in totals:
         totals[key] += evaluation[key]
 
+# ----------------------------------------------------
+# Save Scores
+# ----------------------------------------------------
+
+os.makedirs("data", exist_ok=True)
+
 with open(OUTPUT_FILE, "w", encoding="utf-8") as f:
-    json.dump(scores, f, indent=4, ensure_ascii=False)
+    json.dump(
+        scores,
+        f,
+        indent=4,
+        ensure_ascii=False,
+    )
+
+# ----------------------------------------------------
+# Summary
+# ----------------------------------------------------
+
+if len(scores) == 0:
+
+    print("\n========================================")
+    print("No replies were evaluated.")
+    print("This usually means:")
+    print("- All Gmail emails were newsletters/promotions.")
+    print("- All emails were skipped intentionally.")
+    print("========================================")
+
+    exit(0)
 
 n = len(scores)
 
@@ -143,9 +196,15 @@ averages = {
     for key, value in totals.items()
 }
 
-overall_score = round(sum(averages.values()) / 5, 2)
+overall_score = round(
+    sum(averages.values()) / len(averages),
+    2,
+)
 
-lowest = min(scores, key=lambda x: x["overall"])
+lowest = min(
+    scores,
+    key=lambda x: x["overall"],
+)
 
 print("\n========== Evaluation Summary ==========\n")
 
