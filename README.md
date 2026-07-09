@@ -1,4 +1,4 @@
-# Hiver Open Challenge — AI Email Reply Assistant
+# Smartdraft-AI — AI Email Reply Assistant
 
 ## Overview
 
